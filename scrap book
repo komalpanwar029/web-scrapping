@@ -1,0 +1,40 @@
+import  requests
+from bs4 import BeautifulSoup
+url = "https://books.toscrape.com/"
+r = requests.get(url)
+print(r)
+soup = BeautifulSoup(r.content ,"html.parser") 
+print(soup.prettify)
+respo_p  = soup.find_all("p")
+respo_a  = soup.find_all("a")
+print(respo_p)
+print(respo_a)
+all_link = []
+for link in respo_a : 
+    if(link.get('href')!= '#') :
+       linktext = ("https://books.toscrape.com/"+ link.get('href'))
+       all_link.append(link)
+    print(linktext)
+    
+data = []
+
+# Select the elements containing the list of names
+lists = soup.select('.nav-list > li > ul > li > a')
+
+# Extract the text of each name and append it to the data list
+for list in lists:
+    data.append(list.text.strip())
+
+print(data)    
+
+data = []
+books = soup.find_all('article', class_='product_pod')
+for book in books:
+    title = book.find('h3').find('a')['title']
+    price = book.find('p', class_='price_color').text
+    availability = book.find('p' ,class_= 'instock availability').text
+    rating = book.find('p', class_='star-rating')['class'][1]
+    data.append({'Title': title, 'Price': price, 'availability ' :availability , 'Rating': rating})
+    
+
+print(data)
